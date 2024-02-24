@@ -36,6 +36,28 @@ public class Characters : MonoBehaviour
         else gameplayInstance.AddEnemyCharacters(character);
     }
 
+    public void ScanArea() {
+        // player Char
+        if (isPlayerChar && gameplayInstance.enemyCharacterList.Count != 0) 
+        {
+            isAreaClear = false;
+            UpdateTargetAndTakeCover();
+        }
+
+        // enemy Char
+        else if (!isPlayerChar && gameplayInstance.playerCharacterList.Count != 0) 
+        {
+            isAreaClear = false;
+            UpdateTargetAndTakeCover();
+        }
+
+        else isAreaClear = true;
+    }
+
+    void UpdateTargetAndTakeCover() {
+        // TODO : not yet implemented
+    }
+
     void TakeDamage(float damage)
     {
         if (isTakingCover && Random.value > 0.5f) { // 50% chance to miss

@@ -1,0 +1,91 @@
+// first approach :
+
+public class GameplayDummy : MonoBehaviour
+{
+
+    public List<GameObject> enemyCharacters;    // assume i have 5
+    public List<GameObject> playerCharacters;
+
+    // . . .
+
+    public void SpawnEnemyAndCover() {
+        // when player character reach checkpoint detect with colision
+
+        // spawn enemyCharacters        // assume i spawn 5
+        
+        // for each playerCharacters 
+            // get Character Script
+            // individualPlayerCharacters.ScanArea(enemyCharacters)
+        // for each enemyCharacters.ScanArea(enemyCharacters)
+            // get Character Script
+            // individualEnemyCharacter.ScanArea(enemyCharacters)
+    }
+
+}
+
+
+public class CharacterDummy : MonoBehaviour
+{
+    // . . .
+    public void ScanArea(GameObject opponent) {
+        // player Char
+        if (opponent.Count != 0) 
+        {
+            isAreaClear = false;
+            UpdateTargetAndTakeCover();
+        }
+        else isAreaClear = true;
+    }
+}
+
+
+
+
+
+second approach :
+
+public class GameplayDummy2 : MonoBehaviour
+{
+
+    public List<GameObject> enemyCharacters;    // assume i have 5
+    public List<GameObject> playerCharacters;
+
+    . . .
+
+    public void SpawnEnemyAndCover() {
+        // when player character reach checkpoint detect with colision
+
+        // spawn enemyCharacters        // assume i spawn 5
+        
+        // for each playerCharacters 
+            // get Character Script
+            // individualPlayerCharacters.ScanArea()
+        // for each enemyCharacters
+            // get Character Script
+            // individualEnemyCharacter.ScanArea()
+    }
+
+}
+
+
+public class CharacterDummy2 : MonoBehaviour
+{
+    // . . .
+    public void ScanArea() {
+        // player Char
+        if (isPlayerChar && gameplayInstance.enemyCharacters.Count != 0) 
+        {
+            isAreaClear = false;
+            UpdateTargetAndTakeCover();
+        }
+
+        // enemy Char
+        else if (!isPlayerChar && gameplayInstance.playerCharacters.Count != 0) 
+        {
+            isAreaClear = false;
+            UpdateTargetAndTakeCover();
+        }
+
+        else isAreaClear = true;
+    }
+}
