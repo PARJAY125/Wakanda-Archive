@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 // Description [Human Language] :
@@ -13,16 +15,14 @@ public class Characters : MonoBehaviour
     public GameObject character;
     public GameObject targetedChar;
     public GameObject bulletParticle;
+    public Image healthBar;
 
     // Flags:
     public bool isPlayerChar;
 
     // Char Stats:
-    public float hp;
-    public float damage;
-    public float scanRadius;
-    public bool isCanTakeCover;
-
+    public CharacterStats characterStats;
+    
     // Cover:
     public bool isAreaClear = true;
     public bool isTakingCover; 
@@ -34,37 +34,60 @@ public class Characters : MonoBehaviour
         gameplayInstance = FindObjectOfType<Gameplay>();
         if (isPlayerChar) gameplayInstance.AddPlayerCharacters(character);
         else gameplayInstance.AddEnemyCharacters(character);
+
+
+        // if enemy, rotate the Y axis 180
+        // set color to red
+
+        // Dummy Naming
+        if (isPlayerChar) character.name = "GoodStudentCharUI";
+        else character.name = "NeedCorrectionStudentCharUI";
     }
 
-    public void ScanArea() {
-        // player Char
-        if (isPlayerChar && gameplayInstance.enemyCharacterList.Count != 0) 
-        {
-            isAreaClear = false;
-            UpdateTargetAndTakeCover();
-        }
-
-        // enemy Char
-        else if (!isPlayerChar && gameplayInstance.playerCharacterList.Count != 0) 
-        {
-            isAreaClear = false;
-            UpdateTargetAndTakeCover();
-        }
-
-        else isAreaClear = true;
+    private void Start() {
+        ScanTarget();
     }
 
-    void UpdateTargetAndTakeCover() {
-        // TODO : not yet implemented
+    public void ScanTarget() {
+        List<GameObject> targetList = isPlayerChar ? gameplayInstance.enemyCharacterList : gameplayInstance.playerCharacterList;
+        
+        isAreaClear = false;
+        while (targetList.Count > 0) {
+            targetedChar = FindNearestTarget(targetList);
+            
+            // request cover
+            // coverSpotGO = gameplayInstance.coverSpotList.;
+            // shoot target every 1 second
+        }
+        
+        isAreaClear = true;
+    }
+
+    GameObject FindNearestTarget(List<GameObject> targetList) {
+        GameObject nearestTarget = null;
+        float nearestDistance = float.MaxValue;
+
+        foreach (GameObject target in targetList) {
+            // Debug.Log(Vector3.Distance(character.transform.position, target.transform.position));
+            // Vector3.Distance(character.transform.position, target.transform.position);
+            float distance = Vector3.Distance(character.transform.position, target.transform.position);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearestTarget = target;
+            }
+        }
+
+        return nearestTarget;
     }
 
     void TakeDamage(float damage)
     {
-        if (isTakingCover && Random.value > 0.5f) { // 50% chance to miss
+        if (!isTakingCover) characterStats.hp -= damage;
+        else {
             CoverSpot coverSpotS = coverSpotGO.GetComponent<CoverSpot>();
-            coverSpotS.TakeDamage(damage);
+            characterStats.hp -= coverSpotS.TakeDamage(damage);
         }
-        else hp -= damage;
-        if (hp <= 0) Destroy(gameObject);
+        
+        if (characterStats.hp <= 0) Destroy(character);
     }
 }

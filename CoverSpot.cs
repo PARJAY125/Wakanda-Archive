@@ -9,6 +9,7 @@ public class CoverSpot : MonoBehaviour
 {
     private static Gameplay gameplayInstance;
     public float hp = 300;
+    public bool isCoverRequested;
     public GameObject coverSpot;
 
     void Start()
@@ -16,10 +17,18 @@ public class CoverSpot : MonoBehaviour
         gameplayInstance = GameObject.Find("Gameplay").GetComponent<Gameplay>();
         gameplayInstance.AddCoverSpot(gameObject);
     }
-    
-    public void TakeDamage(float damage)
+
+    public float TakeDamage(float damage)
     {
-        hp -= damage;
-        if (hp <= 0) Destroy(gameObject);
+        bool hitCover = Random.value > 0.5f;
+        
+        // blocked by cover
+        if (hitCover) { 
+            hp -= damage;
+            if (hp <= 0) Destroy(gameObject);
+            return 0;
+        }
+
+        return damage;
     }
 }
