@@ -1,6 +1,10 @@
 using UnityEngine;
 
-public class Character : MonoBehaviour
+
+// Description [Human Language] :
+//  - This Script is basicaly a bridge for all script communication in the game
+
+public class Gameplay : MonoBehaviour
 {
     
 }
