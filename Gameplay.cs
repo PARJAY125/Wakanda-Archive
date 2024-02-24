@@ -14,6 +14,25 @@ public class Gameplay : MonoBehaviour
     public List<GameObject> enemyCharacterList;
     public List<GameObject> playerCharacterList;
     
+    void Start()
+    {
+        CoverAndCharPair();
+    }
+
+    void CheckpointReached() {
+        // destroy oldest coverSpot Batch
+        // summon new coverSpot Batch
+        // summon new enemy Batch
+        // CoverAndCharPair
+    }
+
+    void CoverAndCharPair() {
+        foreach (GameObject coverSpot in coverSpotList) {
+            CoverSpot coverSpotS = coverSpot.GetComponent<CoverSpot>();
+            coverSpotS.PairCoverWithNearestChar();
+        }
+    }
+
     public void AddCoverSpot(GameObject newCoverSpot) {
         coverSpotList.Add(newCoverSpot);
     }

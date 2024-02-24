@@ -8,11 +8,11 @@ using UnityEngine.UI;
 //  - Contain all possible blue archive character action in gameplay
 //  - action : scan area, take cover, setTargetedChar, shoot, path finding, take damage, march forward
 
-public class Characters : MonoBehaviour
+public class CharacterScript : MonoBehaviour
 {
     // References:
     public static Gameplay gameplayInstance;
-    public GameObject character;
+    public GameObject characterUi;
     public GameObject targetedChar;
     public GameObject bulletParticle;
     public Image healthBar;
@@ -25,23 +25,22 @@ public class Characters : MonoBehaviour
     
     // Cover:
     public bool isAreaClear = true;
-    public bool isTakingCover; 
-    public GameObject coverSpotGO; 
+    public bool isTakingCover;
+    public GameObject coverSpotGO;      // setted outside
 
 
     void Awake()
     {
         gameplayInstance = FindObjectOfType<Gameplay>();
-        if (isPlayerChar) gameplayInstance.AddPlayerCharacters(character);
-        else gameplayInstance.AddEnemyCharacters(character);
-
+        if (isPlayerChar) gameplayInstance.AddPlayerCharacters(gameObject);
+        else gameplayInstance.AddEnemyCharacters(gameObject);
 
         // if enemy, rotate the Y axis 180
         // set color to red
 
         // Dummy Naming
-        if (isPlayerChar) character.name = "GoodStudentCharUI";
-        else character.name = "NeedCorrectionStudentCharUI";
+        if (isPlayerChar) characterUi.name = "GoodStudentCharUI";
+        else characterUi.name = "NeedCorrectionStudentCharUI";
     }
 
     private void Start() {
@@ -52,12 +51,9 @@ public class Characters : MonoBehaviour
         List<GameObject> targetList = isPlayerChar ? gameplayInstance.enemyCharacterList : gameplayInstance.playerCharacterList;
         
         isAreaClear = false;
-        while (targetList.Count > 0) {
+        if (targetList.Count > 0) {
             targetedChar = FindNearestTarget(targetList);
-            
-            // request cover
-            // coverSpotGO = gameplayInstance.coverSpotList.;
-            // shoot target every 1 second
+            ShotTarget();
         }
         
         isAreaClear = true;
@@ -68,9 +64,7 @@ public class Characters : MonoBehaviour
         float nearestDistance = float.MaxValue;
 
         foreach (GameObject target in targetList) {
-            // Debug.Log(Vector3.Distance(character.transform.position, target.transform.position));
-            // Vector3.Distance(character.transform.position, target.transform.position);
-            float distance = Vector3.Distance(character.transform.position, target.transform.position);
+            float distance = Vector3.Distance(characterUi.transform.position, target.transform.position);
             if (distance < nearestDistance) {
                 nearestDistance = distance;
                 nearestTarget = target;
@@ -78,6 +72,19 @@ public class Characters : MonoBehaviour
         }
 
         return nearestTarget;
+    }
+
+      // cover setted outside
+    public void GoToCover(GameObject coverSpot) {
+        // move from current position to cover position
+        // if cover reached
+            // isTakingCover = true;
+            // coverSpotGO = coverSpot;
+    }
+
+    void ShotTarget() {
+        // shoot every 1 second
+        // if the target died, re - ScanTarget()
     }
 
     void TakeDamage(float damage)
@@ -88,6 +95,10 @@ public class Characters : MonoBehaviour
             characterStats.hp -= coverSpotS.TakeDamage(damage);
         }
         
-        if (characterStats.hp <= 0) Destroy(character);
+        if (characterStats.hp <= 0) {
+            Destroy(gameObject);
+            CoverSpot coverSpotS = coverSpotGO.GetComponent<CoverSpot>();
+            coverSpotS.isOccupied = false;
+        }
     }
 }
