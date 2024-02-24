@@ -7,5 +7,19 @@ using UnityEngine;
 
 public class CoverSpot : MonoBehaviour
 {
+    private static Gameplay gameplayInstance;
+    public float hp = 300;
+    public GameObject coverSpot;
+
+    void Start()
+    {
+        gameplayInstance = GameObject.Find("Gameplay").GetComponent<Gameplay>();
+        gameplayInstance.AddCoverSpot(gameObject);
+    }
     
+    public void TakeDamage(float damage)
+    {
+        hp -= damage;
+        if (hp <= 0) Destroy(gameObject);
+    }
 }
