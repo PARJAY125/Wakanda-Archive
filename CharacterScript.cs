@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,13 +9,17 @@ using UnityEngine.UI;
 //  - Contain all possible blue archive character action in gameplay
 //  - action : scan area, take cover, setTargetedChar, shoot, path finding, take damage, march forward
 
+
+// TODO : it would be nice if we have null safety
+// idea 1 : have a function to call targetedChar with null checker
 public class CharacterScript : MonoBehaviour
 {
     // References:
     public static Gameplay gameplayInstance;
     public GameObject characterUi;
     public GameObject targetedChar;
-    public GameObject bulletParticle;
+    public GameObject bulletPrefab;
+    public GameObject bulletSpawnPosition;
     public Image healthBar;
 
     // Flags:
@@ -39,8 +44,18 @@ public class CharacterScript : MonoBehaviour
         // set color to red
 
         // Dummy Naming
-        if (isPlayerChar) characterUi.name = "GoodStudentCharUI";
-        else characterUi.name = "NeedCorrectionStudentCharUI";
+        if (isPlayerChar) {
+            characterUi.name = "GoodStudentCharUI";
+            characterStats.Maxhp = 100;
+            characterStats.damage = 10;
+        }
+        else {
+            characterUi.name = "NeedCorrectionStudentCharUI";
+            characterStats.Maxhp = 100;
+            characterStats.damage = 5;
+        }
+
+        characterStats.currentHp = characterStats.Maxhp;
     }
 
     private void Start() {
@@ -53,10 +68,14 @@ public class CharacterScript : MonoBehaviour
         isAreaClear = false;
         if (targetList.Count > 0) {
             targetedChar = FindNearestTarget(targetList);
-            ShotTarget();
+            AttackTarget();
+            StartCoroutine(AimAtTarget());
         }
         
-        isAreaClear = true;
+        else {
+            isAreaClear = true;
+            StopCoroutine(AimAtTarget());
+        }
     }
 
     GameObject FindNearestTarget(List<GameObject> targetList) {
@@ -64,7 +83,7 @@ public class CharacterScript : MonoBehaviour
         float nearestDistance = float.MaxValue;
 
         foreach (GameObject target in targetList) {
-            float distance = Vector3.Distance(characterUi.transform.position, target.transform.position);
+            float distance = Vector3.Distance(gameObject.transform.position, target.transform.position);
             if (distance < nearestDistance) {
                 nearestDistance = distance;
                 nearestTarget = target;
@@ -74,31 +93,68 @@ public class CharacterScript : MonoBehaviour
         return nearestTarget;
     }
 
-      // cover setted outside
+    // TODO : this is complex, do in the last
     public void GoToCover(GameObject coverSpot) {
-        // move from current position to cover position
+        // move from gameObject current position to cover position
         // if cover reached
             // isTakingCover = true;
             // coverSpotGO = coverSpot;
     }
 
-    void ShotTarget() {
-        // shoot every 1 second
-        // if the target died, re - ScanTarget()
+    void AttackTarget() {
+        if (targetedChar != null) StartCoroutine(AttackSequence());
+        else ScanTarget();
     }
 
-    void TakeDamage(float damage)
+    IEnumerator AttackSequence()
     {
-        if (!isTakingCover) characterStats.hp -= damage;
+        FireWeapon();
+        yield return StartCoroutine(Reload());
+    }
+
+    IEnumerator AimAtTarget() {
+        characterUi.transform.LookAt(targetedChar.transform);
+        yield return new WaitForSeconds(0.1f);
+        
+        // todo : potential error -> no error (work perfectly)
+        StartCoroutine(AimAtTarget());
+    }
+
+    private int bulletCount = 0;
+    private string bulletName = "";
+    void FireWeapon() {
+        GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPosition.transform.position, bulletSpawnPosition.transform.rotation);
+
+        if(isPlayerChar) bulletName = "Player Bullet ";
+        else bulletName = "Enemy Bullet ";
+        bullet.name = bulletName + bulletCount.ToString();
+
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
+        bulletScript.targetedChar = targetedChar;
+        bulletScript.damage = characterStats.damage;
+
+        bulletCount++;
+    }
+
+    IEnumerator Reload() {
+        yield return new WaitForSeconds(characterStats.attackSpeed);
+        AttackTarget();
+    }
+
+    public void TakeDamage(float damage)
+    {
+        if (!isTakingCover) characterStats.currentHp -= damage;
         else {
             CoverSpot coverSpotS = coverSpotGO.GetComponent<CoverSpot>();
-            characterStats.hp -= coverSpotS.TakeDamage(damage);
+            characterStats.currentHp -= coverSpotS.TakeDamage(damage);
         }
         
-        if (characterStats.hp <= 0) {
+        if (characterStats.currentHp <= 0) {
             Destroy(gameObject);
             CoverSpot coverSpotS = coverSpotGO.GetComponent<CoverSpot>();
             coverSpotS.isOccupied = false;
         }
+
+        healthBar.fillAmount = characterStats.currentHp / characterStats.Maxhp;
     }
 }
