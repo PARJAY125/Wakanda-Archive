@@ -9,6 +9,7 @@ using UnityEngine;
 public class CoverSpot : MonoBehaviour
 {
     private static Gameplay gameplayInstance;
+
     public float hp = 300;
     public bool isOccupied;
 
@@ -16,53 +17,6 @@ public class CoverSpot : MonoBehaviour
     {
         gameplayInstance = GameObject.Find("Gameplay").GetComponent<Gameplay>();
         gameplayInstance.AddCoverSpot(gameObject);
-    }
-
-    // for minimal looping, The cover determines which character will occupy it
-    public void PairCoverWithNearestChar() {
-        if (isOccupied) return;
-        
-        bool isPlayerChar = false;
-        int nearestCharIndex = -1;
-
-        float nearestDistance = float.MaxValue;
-
-        // check every enemyCharacterList and playerCharacterList
-        // optimize later
-        for (int i = 0; i < gameplayInstance.enemyCharacterList.Count; i++) {
-            CharacterScript characterScript = gameplayInstance.enemyCharacterList[i].GetComponent<CharacterScript>();
-            if (!characterScript.characterStats.isCanTakeCover) continue;
-
-            float distance = Vector3.Distance(gameObject.transform.position, gameplayInstance.enemyCharacterList[i].transform.position);
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                nearestCharIndex = i;
-            }
-        }
-
-        for (int i = 0; i < gameplayInstance.playerCharacterList.Count; i++) {
-            CharacterScript characterScript = gameplayInstance.enemyCharacterList[i].GetComponent<CharacterScript>();
-            if (!characterScript.characterStats.isCanTakeCover) continue;
-
-            float distance = Vector3.Distance(gameObject.transform.position, gameplayInstance.enemyCharacterList[i].transform.position);
-            if (distance < nearestDistance) {
-                nearestDistance = distance;
-                nearestCharIndex = i;
-                isPlayerChar = true;
-            }
-        }
-
-        // check is valid
-        if (nearestCharIndex == -1) return;
-        
-        // find that nearestCharacter 
-        CharacterScript nearestCharacterScript;
-        if (isPlayerChar) nearestCharacterScript = gameplayInstance.playerCharacterList[nearestCharIndex].GetComponent<CharacterScript>();
-        else nearestCharacterScript = gameplayInstance.playerCharacterList[nearestCharIndex].GetComponent<CharacterScript>();
-
-        isOccupied = true;
-        // 
-        nearestCharacterScript.GoToCover(gameObject);
     }
 
     public float TakeDamage(float damage)

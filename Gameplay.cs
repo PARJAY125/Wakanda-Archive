@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -13,17 +14,32 @@ public class Gameplay : MonoBehaviour
     public List<GameObject> coverSpotList;
     public List<GameObject> enemyCharacterList;
     public List<GameObject> playerCharacterList;
-    
+    public List<GameObject> CoverSpotNCharDetectionRadius;
+
+    public GameObject Checkpoint;
+
+    public int enemyLeft = 1;
+
+    public int batchGeneration = 1;
+    public int gameObjectGeneration = 1;
+
     void Start()
     {
-        CoverAndCharPair();
+        // set the amount of enemy | enemyLeft = [set here];
+        // CoverAndCharPair();
     }
 
     void CheckpointReached() {
         // destroy oldest coverSpot Batch
-        // summon new coverSpot Batch
-        // summon new enemy Batch
+
+        // make a template Name for them
+
+        // summon new coverSpot Batch with template name + unique name
+        // summon new enemy Batch with template name + unique name
+        
         // CoverAndCharPair
+
+        // destroy current checkpoint and if enemyleft is not 0 make a new checkpoint
     }
 
     void CoverAndCharPair() {
@@ -43,5 +59,9 @@ public class Gameplay : MonoBehaviour
 
     public void AddEnemyCharacters(GameObject newEnemyCharacters) {
         enemyCharacterList.Add(newEnemyCharacters);
+    }
+
+    public void AddCoverSpotNCharDetectionRadius(GameObject newCoverSpotNCharDetectionRadius) {
+        CoverSpotNCharDetectionRadius.Add(newCoverSpotNCharDetectionRadius);
     }
 }

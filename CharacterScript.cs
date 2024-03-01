@@ -20,6 +20,7 @@ public class CharacterScript : MonoBehaviour
     public GameObject targetedChar;
     public GameObject bulletPrefab;
     public GameObject bulletSpawnPosition;
+    public BoxCollider characterAttackRangeUi;
     public Image healthBar;
 
     // Flags:
@@ -30,8 +31,8 @@ public class CharacterScript : MonoBehaviour
     
     // Cover:
     public bool isAreaClear = true;
-    public bool isTakingCover;
-    public GameObject coverSpotGO;      // setted outside
+    public bool isTakingCover = false;
+    public GameObject coverSpotGO = null;      // setted outside
 
 
     void Awake()
@@ -56,6 +57,10 @@ public class CharacterScript : MonoBehaviour
         }
 
         characterStats.currentHp = characterStats.Maxhp;
+
+        // Set range
+        Transform colliderTransform = characterAttackRangeUi.transform;
+        colliderTransform.localScale = new Vector3(characterStats.attackRange, colliderTransform.localScale.y, characterStats.attackRange);
     }
 
     private void Start() {
@@ -121,17 +126,16 @@ public class CharacterScript : MonoBehaviour
     }
 
     private int bulletCount = 0;
-    private string bulletName = "";
+
     void FireWeapon() {
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawnPosition.transform.position, bulletSpawnPosition.transform.rotation);
 
-        if(isPlayerChar) bulletName = "Player Bullet ";
-        else bulletName = "Enemy Bullet ";
-        bullet.name = bulletName + bulletCount.ToString();
+        bullet.name = (isPlayerChar ? "Player Bullet " : "Enemy Bullet ") + bulletCount.ToString();
 
         Bullet bulletScript = bullet.GetComponent<Bullet>();
         bulletScript.targetedChar = targetedChar;
         bulletScript.damage = characterStats.damage;
+        bulletScript.targetedCharS = targetedChar.GetComponent<CharacterScript>();
 
         bulletCount++;
     }
