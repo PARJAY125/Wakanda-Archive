@@ -41,38 +41,30 @@ public class CharacterScript : MonoBehaviour
         if (isPlayerChar) gameplayInstance.AddPlayerCharacters(gameObject);
         else gameplayInstance.AddEnemyCharacters(gameObject);
 
-        // if enemy, rotate the Y axis 180
-        // set color to red
-
-        // Dummy Naming
-        if (isPlayerChar) {
-            characterUi.name = "GoodStudentCharUI";
-            characterStats.Maxhp = 100;
-            characterStats.damage = 10;
-        }
-        else {
-            characterUi.name = "NeedCorrectionStudentCharUI";
-            characterStats.Maxhp = 100;
-            characterStats.damage = 5;
-        }
-
+        int index = Random.Range(0, CharacterList.characters.Count);
+        characterStats = CharacterList.characters[index];
         characterStats.currentHp = characterStats.Maxhp;
 
         // Set range
-        Transform colliderTransform = characterAttackRangeUi.transform;
-        colliderTransform.localScale = new Vector3(characterStats.attackRange, colliderTransform.localScale.y, characterStats.attackRange);
+        characterAttackRangeUi.size = new Vector3(characterAttackRangeUi.size.x, characterStats.attackRange * 10, characterStats.attackRange * 10);
+
+        if (isPlayerChar) characterStats.isCanTakeCover = true;
     }
 
     private void Start() {
         ScanTarget();
     }
 
+    // just responsible for finding targetedChar outside the characterAttackRangeUi
+    // if enemy found, move there
     public void ScanTarget() {
         List<GameObject> targetList = isPlayerChar ? gameplayInstance.enemyCharacterList : gameplayInstance.playerCharacterList;
         
-        isAreaClear = false;
         if (targetList.Count > 0) {
+            isAreaClear = false;
             targetedChar = FindNearestTarget(targetList);
+            
+            // move to target
             AttackTarget();
             StartCoroutine(AimAtTarget());
         }
@@ -102,17 +94,16 @@ public class CharacterScript : MonoBehaviour
     public void GoToCover(GameObject coverSpot) {
         // move from gameObject current position to cover position
         // if cover reached
-            // isTakingCover = true;
-            // coverSpotGO = coverSpot;
+            // coverSpotGO = coverSpot;            
     }
 
+    // turn this into collider script
     void AttackTarget() {
         if (targetedChar != null) StartCoroutine(AttackSequence());
         else ScanTarget();
     }
 
-    IEnumerator AttackSequence()
-    {
+    IEnumerator AttackSequence() {
         FireWeapon();
         yield return StartCoroutine(Reload());
     }

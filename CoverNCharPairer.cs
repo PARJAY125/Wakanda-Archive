@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoverNCharPairer : MonoBehaviour
+public class CoverSpotNCharPairer : MonoBehaviour
 {
     // public GameObject CoverSpotNCharDetectionRadius;
     public List<CharacterScript> detectedChars = new();
@@ -9,11 +9,12 @@ public class CoverNCharPairer : MonoBehaviour
 
     // I have more better method than looping, just use collision
     private void OnCollisionEnter(Collision other) {
-        GameObject collidedGameObject = other.gameObject;
+        GameObject collidedGameObject = other.gameObject;        
 
-        
-
-        if (collidedGameObject.TryGetComponent<CharacterScript>(out var detectedChar)) 
+        if (
+            collidedGameObject.TryGetComponent<CharacterScript>(out var detectedChar) && 
+            !detectedChars.Contains(detectedChar)
+        ) 
             detectedChars.Add(detectedChar);
         else if (collidedGameObject.TryGetComponent<CoverSpot>(out var detectedSpot))  
             detectedSpots.Add(detectedSpot);
@@ -39,9 +40,12 @@ public class CoverNCharPairer : MonoBehaviour
             }
 
             if (nearestEligibleChar != null) {
+                nearestEligibleChar.isTakingCover = true;
                 nearestEligibleChar.GoToCover(gameObject);
                 detectedSpot.isOccupied = true;
             }
         }
     }
+
+
 }

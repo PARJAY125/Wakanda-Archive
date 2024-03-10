@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
-public class CharacterList
-{
-    public List<CharacterStats> characters = new() {
+[Serializable]
+public class CharacterList {
+    public static List<CharacterStats> characters = new() {
         new() { 
             charName = "Hoshino Aoba", 
             Maxhp = 1000, 

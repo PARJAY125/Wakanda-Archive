@@ -15,7 +15,7 @@ public class Gameplay : MonoBehaviour
     public List<GameObject> enemyCharacterList;
     public List<GameObject> playerCharacterList;
     public List<GameObject> CoverSpotNCharDetectionRadius;
-
+    
     public GameObject Checkpoint;
 
     public int enemyLeft = 1;
@@ -26,6 +26,7 @@ public class Gameplay : MonoBehaviour
     void Start()
     {
         // set the amount of enemy | enemyLeft = [set here];
+        enemyLeft = 1;
         // CoverAndCharPair();
     }
 
@@ -37,16 +38,9 @@ public class Gameplay : MonoBehaviour
         // summon new coverSpot Batch with template name + unique name
         // summon new enemy Batch with template name + unique name
         
-        // CoverAndCharPair
+        // create CoverSpotNCharPairer in every batch
 
         // destroy current checkpoint and if enemyleft is not 0 make a new checkpoint
-    }
-
-    void CoverAndCharPair() {
-        foreach (GameObject coverSpot in coverSpotList) {
-            CoverSpot coverSpotS = coverSpot.GetComponent<CoverSpot>();
-            coverSpotS.PairCoverWithNearestChar();
-        }
     }
 
     public void AddCoverSpot(GameObject newCoverSpot) {

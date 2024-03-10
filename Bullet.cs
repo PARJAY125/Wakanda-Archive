@@ -4,32 +4,27 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public GameObject targetedChar;
-    public GameObject targetedCharUi;
     public CharacterScript targetedCharS;
 
-    public Vector3 targetedCharUiPosition;
+    public Vector3 targetedCharPosition;
     public int speed = 1;
     public float damage;
 
     void Start()
     {
-        // targetedCharS = targetedChar.GetComponent<CharacterScript>();
-        targetedCharUi = targetedCharS.characterUi;
-
-        targetedCharUiPosition = targetedCharUi.transform.position;
+        targetedCharPosition = targetedChar.transform.position;
     }
 
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetedCharUiPosition, speed * Time.deltaTime);
-        if (transform.position == targetedCharUiPosition) Destroy(gameObject);
+        transform.position = Vector3.MoveTowards(transform.position, targetedCharPosition, speed * Time.deltaTime);
+        if (transform.position == targetedCharPosition) Destroy(gameObject);
     }
 
     // detect colison when collide with target OR target cover spot, destroy game object and deal damage to target
     private void OnCollisionEnter(Collision other) {
-        
         if (
-            other.gameObject == targetedCharUi ||
+            other.gameObject == targetedChar ||
             (other.gameObject == targetedCharS.coverSpotGO)
         ) {
             targetedCharS.TakeDamage(damage);
