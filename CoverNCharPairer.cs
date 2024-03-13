@@ -1,6 +1,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+
+to do list :
+
+- check student range,
+find cover based on char range 
+ - if char range short, find the farthest cover
+ - if char range long, find the nearest cover
+
+*/
 public class CoverSpotNCharPairer : MonoBehaviour
 {
     // public GameObject CoverSpotNCharDetectionRadius;
@@ -30,6 +40,7 @@ public class CoverSpotNCharPairer : MonoBehaviour
 
             foreach (CharacterScript character in detectedChars) {
                 if (!character.characterStats.isCanTakeCover) continue;
+                if (character.isTakingCover) continue;
 
                 float distance = Vector3.Distance(character.transform.position, detectedSpot.transform.position);
 
@@ -46,6 +57,4 @@ public class CoverSpotNCharPairer : MonoBehaviour
             }
         }
     }
-
-
 }

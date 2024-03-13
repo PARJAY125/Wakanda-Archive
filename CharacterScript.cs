@@ -12,6 +12,10 @@ using UnityEngine.UI;
 
 // TODO : it would be nice if we have null safety
 // idea 1 : have a function to call targetedChar with null checker
+
+
+// this CharacterScript need State
+
 public class CharacterScript : MonoBehaviour
 {
     // References:
@@ -51,7 +55,7 @@ public class CharacterScript : MonoBehaviour
         if (isPlayerChar) characterStats.isCanTakeCover = true;
     }
 
-    private void Start() {
+    private void Start() {  
         ScanTarget();
     }
 

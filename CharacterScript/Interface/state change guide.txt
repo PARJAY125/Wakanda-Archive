@@ -1,0 +1,28 @@
+MoveForward: 
+    If the character collides with the fighting area collider, transition to Scannable.
+
+Scannable:
+    If an enemy is found, transition to GoToTarget.
+    If cover is found and needed (e.g., low health), transition to GoToCover.
+    If no enemy or cover is found, remain in Scannable and continue searching.
+
+GoToTarget:
+    If the character reaches the target or the enemy becomes out of sight, transition back to Scannable.
+
+GoToCover:
+    If the character reaches the cover or no longer needs cover, transition back to Scannable.
+
+AimAtEnemy: 
+    Aiming aiming is complete (a short duration), transition to Fire.
+
+Fire: 
+    After firing (potentially with a cooldown), transition to Reload.
+
+Reload: After reloading (potentially with a cooldown), transition back to Scannable.
+    Q: why not AimAtEnemy?
+    A: because if there something happend like taunt, or there is another enemy approaching more near than the current target, the target should change
+
+
+ITakingCover:
+    Reduce chance of being hitted by 50%
+    Reduce damage of AoE or Fan Ex Skill by 30%     // prototype / experimental / open suggestion for better game mechanic
