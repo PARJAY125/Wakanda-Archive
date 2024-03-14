@@ -1,5 +1,5 @@
 public class CharacterStateMachine {
-    public CharacterState CurrentCharacterState {get; set;}
+    protected CharacterState CurrentCharacterState {get; set;}
 
     public void Initialize(CharacterState startingState) {
         CurrentCharacterState = startingState;

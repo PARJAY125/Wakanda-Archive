@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 
@@ -27,7 +28,7 @@ public class CharacterBase : MonoBehaviour, IAimable, IAttackable, IDamagable,
     
     #region State Machine Variable 
 
-    public CharacterStateMachine StateMachine {get; set;}
+    public CharacterStateMachine StateMachine;
     public CharacterAimState CharacterAimState {get; set;}
     public CharacterAttackState CharacterAttackState {get; set;}
     public CharacterMoveState CharacterMoveState {get; set;}
@@ -45,22 +46,28 @@ public class CharacterBase : MonoBehaviour, IAimable, IAttackable, IDamagable,
 
         StateMachine = new CharacterStateMachine();
 
-        CharacterAimState = new CharacterAimState(this, StateMachine);
-        CharacterAttackState = new CharacterAttackState(this, StateMachine);
-        CharacterMoveState = new CharacterMoveState(this, StateMachine);
-        CharacterReloadState = new CharacterReloadState(this, StateMachine);
-        CharacterScanCoverState = new CharacterScanCoverState(this, StateMachine);
-        CharacterScanOpponentState = new CharacterScanOpponentState(this, StateMachine);
-        CharacterStandingStillState = new CharacterStandingStillState(this, StateMachine);
-        CharacterTakeCoverState = new CharacterTakeCoverState(this, StateMachine);
+        CharacterAimState = new CharacterAimState(this, StateMachine, this);
+        CharacterAttackState = new CharacterAttackState(this, StateMachine, this);
+        CharacterMoveState = new CharacterMoveState(this, StateMachine, this);
+        CharacterReloadState = new CharacterReloadState(this, StateMachine, this);
+        CharacterScanCoverState = new CharacterScanCoverState(this, StateMachine, this);
+        CharacterScanOpponentState = new CharacterScanOpponentState(this, StateMachine, this);
+        CharacterStandingStillState = new CharacterStandingStillState(this, StateMachine, this);
+        CharacterTakeCoverState = new CharacterTakeCoverState(this, StateMachine, this);
 
         StateMachine.Initialize(CharacterStandingStillState);
     }
 
-    void Update()
+    public IEnumerator StartStateCoroutine()
     {
-        StateMachine.CurrentCharacterState.FrameUpdate();
+        Debug.Log("you call me from the base");
+        yield return new WaitForSeconds(1f);
     }
+
+    // void Update()
+    // {
+    //     StateMachine.CurrentCharacterState.FrameUpdate();
+    // }
 
     public void TakeDamage(float DamageAmount)
     {
